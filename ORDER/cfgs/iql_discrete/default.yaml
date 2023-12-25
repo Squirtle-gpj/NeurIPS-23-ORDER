@@ -1,0 +1,42 @@
+discount: 0.99
+hidden_dim: 256
+n_hidden: 2
+n_steps: 1000000
+batch_size: 64
+sample_seq_length: 64
+learning_rate: 0.0001
+alpha: 0.05
+tau: 0.7
+beta: 3.0
+eval_period: 5000
+log_period: 1000
+save_period: 5000
+n_eval_episodes: 10
+max_episode_steps: 1000
+
+sample_seq_len: 64
+
+#discrete encoder
+pixel: False
+kl:
+  use_kl_balance: True
+  kl_balance_scale: 0.8
+  use_free_nats: False
+  free_nats: 0.0
+loss_scale:
+  kl: 0.1
+  reward: 1.0,
+  discount: 5.0
+grad_clip: 100.0
+rssm_info:
+ deter_size: 200
+ stoch_size: 20
+ class_size: 20
+ category_size: 20
+ min_std: 0.1
+rssm_type: discrete
+embedding_size: 100
+rssm_node_size: 100
+lr:
+  model: 0.0002
+use_prev_rewards: False

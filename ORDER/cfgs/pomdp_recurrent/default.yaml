@@ -1,0 +1,33 @@
+n_steps: 1000000
+batch_size: 64
+learning_rate: 0.001
+max_episode_steps: 1000
+n_code: 50
+token_dim: 3
+log_period: 1
+save_period: 1000
+eval_period: 10000
+
+discount: 0.99
+hidden_dim: 256
+n_hidden: 2
+alpha: 0.05
+tau: 0.7
+beta: 3.0
+n_eval_episodes: 5
+
+policy_path: /home/pengjie/Experiments/test_vae_policy/Checkpoints/test_code10_1234/best.pt
+
+critic_path: /home/pengjie/Experiments/test_iql/Checkpoints/test_1234/final.pt
+obs_encoder_path: /home/pengjie/Experiments/test_vq_vae/Checkpoints/test_1234/final.pt
+
+
+sample_seq_length: 64
+action_embedding_size: 16 # 0
+observ_embedding_size: 32
+reward_embedding_size: 16 # 0
+rnn_hidden_size: 128
+policy_layers: [256]
+grad_norm: 1.0
+
+

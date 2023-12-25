@@ -1,0 +1,14 @@
+discount: 0.99
+hidden_dim: 256
+n_hidden: 2
+n_steps: 200000
+batch_size: 256
+learning_rate: 0.0003
+alpha: 0.05
+tau: 0.7
+beta: 3.0
+eval_period: 5000
+n_eval_episodes: 10
+max_episode_steps: 1000
+log_period: 1000
+save_period: 5000

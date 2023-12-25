@@ -1,0 +1,26 @@
+n_steps: 200000
+batch_size: 1024
+learning_rate: 0.001
+max_episode_steps: 1000
+n_code: 40
+code_dim: 3
+log_period: 1000
+save_period: 1000
+eval_period: 1000
+
+discount: 0.99
+hidden_dim: 256
+n_hidden: 2
+alpha: 0.05
+tau: 0.7
+beta: 3.0
+n_eval_episodes: 10
+
+critic_path: /home/pengjie/Experiments/test_iql/Checkpoints/test_1234/final.pt
+obs_encoder_path: /home/pengjie/Experiments/test_vq_vae_v2/Checkpoints/test_ind_1_codebook_1234/final.pt
+
+share_codebook: True
+vq_coef: 0.2
+commit_coef: 0.4
+
+
