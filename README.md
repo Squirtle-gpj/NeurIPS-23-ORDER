@@ -24,7 +24,7 @@ cd ORDER
 
 python main.py --experiment_name train_iql_critic --code_name test_hopper --env_name hopper-medium-v2
  
-python run_vae_policy.py --experiment_name train_oracle_policy  --code_name test_hopper --env_name hopper-medium-v2 --device 0  --critic_path ..\Experiments\train_iql_critic\Checkpoints\test_hopper_1234\best.pt # here you may change the critic path as an absolute path
+python run_vae_policy.py --experiment_name train_oracle_policy  --code_name test_hopper --env_name hopper-medium-v2 --device 0  --critic_path ../Experiments/train_iql_critic/Checkpoints/test_hopper_1234/best.pt # here you may change the critic path as an absolute path
 
 # train the proxy policy
 
