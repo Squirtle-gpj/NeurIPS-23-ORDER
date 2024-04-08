@@ -1,5 +1,6 @@
 # NeurIPS-23-ORDER
 The Official Repository for "Offline RL with Discrete Proxy Representations for Generalizability in POMDPs"
+https://openreview.net/pdf?id=tJN664ZNVG
 
 ---
 
