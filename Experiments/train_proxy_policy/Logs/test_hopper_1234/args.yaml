@@ -1,0 +1,59 @@
+---
+action_embedding_size: 16
+alpha: 0.05
+batch_size: 64
+beta: 3.0
+cfg_filename: default
+code_name: test_hopper
+continuous: false
+critic_path: /home/pengjie/Experiments/test_iql/Checkpoints/test_1234/final.pt
+deterministic_policy: false
+device: '0'
+discount: 0.99
+encoder_layers:
+- 256
+env_code: hopper
+env_name: hopper-medium-v2
+eval_period: 10000
+experiment_name: train_proxy_policy
+grad_norm: 1.0
+hidden_dim: 256
+learning_rate: 0.001
+log_period: 1000
+max_episode_steps: 1000
+n_code: 50
+n_eval_episodes: 5
+n_hidden: 2
+n_steps: 200000
+obs_encoder_path: /home/pengjie/Experiments/test_vq_vae/Checkpoints/test_1234/final.pt
+observ_embedding_size: 32
+paths: !!python/object/apply:collections.OrderedDict
+- - - root
+    - E:\Project\NeurIPS-23-ORDER
+  - - workspace
+    - E:\Project\NeurIPS-23-ORDER\ORDER
+  - - Experiments
+    - E:\Project\NeurIPS-23-ORDER\Experiments
+  - - experiment
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy
+  - - tb
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy\tb\test_hopper_1234/
+  - - logs
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy\Logs\test_hopper_1234
+  - - ckpt
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy\Checkpoints/test_hopper_1234/
+  - - results
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy\Results/test_hopper_1234/
+  - - data
+    - E:\Project\NeurIPS-23-ORDER\Experiments\train_proxy_policy\Data/test_hopper_1234/
+policy_path: E:\Project\NeurIPS-23-ORDER\Experiments\train_oracle_policy\Checkpoints\test_hopper_1234\best.pt
+restore: false
+reward_embedding_size: 16
+rnn_hidden_size: 128
+sample_seq_length: 64
+save_logs: false
+save_period: 1000
+seed: 1234
+tau: 0.7
+token_dim: 3
+use_obs_as_labels: false

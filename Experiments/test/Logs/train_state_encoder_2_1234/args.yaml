@@ -1,0 +1,50 @@
+---
+action_size: 3
+alpha: 0.05
+batch_size: 1024
+beta: 3.0
+cfg_filename: default
+code_dim: 1
+code_name: train_state_encoder_2
+commit_coef: 0.4
+device: '0'
+discount: 0.99
+env_name: hopper-medium-v2
+eval_period: 1000
+experiment_name: test
+hidden_dim: 256
+learning_rate: 0.001
+log_period: 1000
+max_episode_steps: 1000
+n_code: 50
+n_eval_episodes: 10
+n_hidden: 2
+n_steps: 200000
+obs_shape: 11
+paths: !!python/object/apply:collections.OrderedDict
+- - - root
+    - E:\Project\NeurIPS-23-ORDER
+  - - workspace
+    - E:\Project\NeurIPS-23-ORDER\ORDER
+  - - Experiments
+    - E:\Project\NeurIPS-23-ORDER\Experiments
+  - - experiment
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test
+  - - tb
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test\tb\train_state_encoder_2_1234/
+  - - logs
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test\Logs\train_state_encoder_2_1234
+  - - ckpt
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test\Checkpoints/train_state_encoder_2_1234/
+  - - results
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test\Results/train_state_encoder_2_1234/
+  - - data
+    - E:\Project\NeurIPS-23-ORDER\Experiments\test\Data/train_state_encoder_2_1234/
+restore: false
+save_logs: false
+save_period: 1000
+seed: 1234
+share_codebook: false
+tau: 0.7
+vq_coef: 0.2
+weight_init: false

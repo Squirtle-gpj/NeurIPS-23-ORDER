@@ -1,0 +1,63 @@
+---
+action_embedding_size: 16
+alpha: 0.05
+batch_size: 64
+beta: 3.0
+cfg_filename: default
+code_dim: 1
+code_name: test
+commit_coef: 0.4
+continuous: false
+critic_path: E:\Project\NeurIPS-23-ORDER\Experiments\test_iql\Checkpoints\test_1234\best.pt
+deterministic_policy: false
+device: '0'
+discount: 0.99
+encoder_layers:
+- 256
+env_code: hopper
+env_name: hopper-medium-v2
+eval_period: 10000
+experiment_name: run_pomdp_encoder_v2
+grad_norm: 1.0
+hidden_dim: 256
+learning_rate: 0.001
+log_period: 1
+max_episode_steps: 1000
+n_code: 50
+n_eval_episodes: 5
+n_hidden: 2
+n_steps: 200000
+obs_encoder_path: E:\Project\NeurIPS-23-ORDER\Experiments\run_vq_vae_v3\Checkpoints\test_2_1234\final.pt
+observ_embedding_size: 32
+paths: !!python/object/apply:collections.OrderedDict
+- - - root
+    - E:\Project\NeurIPS-23-ORDER
+  - - workspace
+    - E:\Project\NeurIPS-23-ORDER\ORDER
+  - - Experiments
+    - E:\Project\NeurIPS-23-ORDER\Experiments
+  - - experiment
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2
+  - - tb
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2\tb\test_1234/
+  - - logs
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2\Logs\test_1234
+  - - ckpt
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2\Checkpoints/test_1234/
+  - - results
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2\Results/test_1234/
+  - - data
+    - E:\Project\NeurIPS-23-ORDER\Experiments\run_pomdp_encoder_v2\Data/test_1234/
+policy_path: E:\Project\NeurIPS-23-ORDER\Experiments\run_vae_policy_v2\Checkpoints\test_1234\best.pt
+restore: false
+reward_embedding_size: 16
+rnn_hidden_size: 128
+sample_seq_length: 64
+save_logs: false
+save_period: 1000
+seed: 1234
+share_codebook: false
+tau: 0.7
+token_dim: 3
+use_obs_as_labels: false
+vq_coef: 0.2
