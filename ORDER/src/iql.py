@@ -101,11 +101,11 @@ class ImplicitQLearning_obs_encoder(nn.Module):
             adv = target_q - v
             exp_adv = torch.exp(self.beta * adv.detach()).clamp(max=EXP_ADV_MAX)
             if not label_input:
-                obs_emb = self.obs_encoder.encode(observations)
+                obs_emb = self.obs_encoder.encode(observations, clip=True)
             else:
-                _, obs_emb = self.obs_encoder.encode(observations, get_idx=True)
+                _, obs_emb = self.obs_encoder.encode(observations, get_idx=True, clip=True)
 
-        policy_out = self.policy(obs_emb.float())
+        policy_out = self.policy(obs_emb.float().detach())
         if isinstance(policy_out, torch.distributions.Distribution):
             bc_losses = -policy_out.log_prob(actions)
         elif torch.is_tensor(policy_out):

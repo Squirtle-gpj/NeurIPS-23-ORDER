@@ -21,6 +21,6 @@ obs_encoder_path: /home/pengjie/Experiments/test_vq_vae/Checkpoints/test_1234/fi
 
 share_codebook: True
 vq_coef: 0.2
-commit_coef: 0.4
+commit_coef: 0.00
 
 

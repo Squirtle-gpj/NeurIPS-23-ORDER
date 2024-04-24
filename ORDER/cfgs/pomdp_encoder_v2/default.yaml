@@ -3,7 +3,7 @@ batch_size: 64
 learning_rate: 0.001
 max_episode_steps: 1000
 n_code: 40
-code_dim: 3
+code_dim: 1
 token_dim: 3
 log_period: 1
 save_period: 1000

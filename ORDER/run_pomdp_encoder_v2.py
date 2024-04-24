@@ -1,11 +1,15 @@
 import os
+
+os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco210//bin")
+os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco-py//mujoco_py") #manually importing mujoco-py dll files for windows, in Linux you can delete these two lines
+
 from tqdm import trange
 from util import exp_logger
 from util.Config import Config, get_parser
 from src.policy import  DeterministicPolicy, GaussianPolicy
 from src.eval.pomdp_eval import *
 from src.pomdp_encoder import POMDP_encoder
-from src.vqvae_v2.vq_vae import VQ_VAE
+from src.vqvae_v2.vq_vae_v2 import VQ_VAE
 
 from src.iql import ImplicitQLearning_obs_encoder
 from src.policy import  DeterministicPolicy, GaussianPolicy
@@ -44,6 +48,7 @@ def main(config):
         vq_coef=config.vq_coef,
         commit_coef=config.commit_coef,
     )
+
     # obs_encoder = discretizer
     #obs_encoder.load_state_dict(torch.load(config.obs_encoder_path))
 
@@ -132,8 +137,18 @@ if __name__ == '__main__':
     parser.add_argument('--env_name', required=True)
     parser.add_argument('--env_code', required=True)
     parser.add_argument('--deterministic_policy', action='store_true')
+    parser.add_argument('--continuous', default=False)
+    parser.add_argument('--use_obs_as_labels', default=False)
     parser.add_argument("--n_code", default=50, help="", type=int)
-    parser.add_argument("--policy_path", default='/home/pengjie/Experiments/test_vae_policy/Checkpoints/test_code10_1234/best.pt', help="", type=str)
+    parser.add_argument("--policy_path",
+                        default='/home/pengjie/Experiments/test_vae_policy/Checkpoints/test_code10_1234/best.pt',
+                        help="", type=str)
+    parser.add_argument("--critic_path",
+                        default='/home/pengjie/Experiments/test_vae_policy/Checkpoints/test_code10_1234/best.pt',
+                        help="", type=str)
+    parser.add_argument("--obs_encoder_path",
+                        default='/home/pengjie/Experiments/test_vae_policy/Checkpoints/test_code10_1234/best.pt',
+                        help="", type=str)
     args = parser.parse_args()
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.device)

@@ -8,7 +8,7 @@ import torch
 from tqdm import trange
 from util import exp_logger
 from util.Config import Config, get_parser
-from src.vqvae_v2.vq_vae import VQ_VAE
+from src.vqvae_v2.vq_vae_v2 import VQ_VAE
 
 from src.iql import  ImplicitQLearning_discrete
 from src.value_functions import TwinQ, ValueFunction
@@ -56,10 +56,12 @@ def get_env_and_dataset(env_name, max_episode_steps, sample_seq_length=None, cod
     else:
         init_weight = None
 
+
     for k, v in dataset.items():
         dataset[k] = torchify(v)
 
-    return env, dataset, init_weight
+
+    return env, dataset, init_weight,
 
 
 def main(config):
@@ -88,6 +90,8 @@ def main(config):
         vq_coef=config.vq_coef,
         commit_coef=config.commit_coef,
         init_emb=init_weight,
+        maxs=dataset["observations"].max(dim=0)[0],
+        mins=dataset["observations"].min(dim=0)[0],
     )
 
 

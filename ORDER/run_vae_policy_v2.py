@@ -8,7 +8,7 @@ import torch
 from tqdm import trange
 from util import exp_logger
 from util.Config import Config, get_parser
-from src.vqvae_v2.vq_vae import VQ_VAE
+from src.vqvae_v2.vq_vae_v2 import VQ_VAE
 from src.iql import  ImplicitQLearning, ImplicitQLearning_obs_encoder
 from src.value_functions import TwinQ, ValueFunction
 from src.policy import  DeterministicPolicy, GaussianPolicy
@@ -54,6 +54,7 @@ def get_env_and_dataset(env_name, max_episode_steps, sample_seq_length=None, cod
     for k, v in dataset.items():
         dataset[k] = torchify(v)
     #dataset['next_obs_quantile_idx']  = torch.cat([dataset['obs_quantile_idx'][1:],dataset['next_obs_quantile_idx']], dim=0)
+
     return env, dataset
 
 
@@ -75,13 +76,17 @@ def main(config):
         n_code=config.n_code,
         code_dim=config.code_dim,
         lr=config.learning_rate,
-        max_steps=config.n_steps,
+        max_steps
+        =config.n_steps,
         share_codebook=config.share_codebook,
         vq_coef=config.vq_coef,
         commit_coef=config.commit_coef,
+        maxs=dataset["observations"].max(dim=0)[0],
+        mins=dataset["observations"].min(dim=0)[0],
     )
     #obs_encoder = discretizer
     obs_encoder.load_state_dict(torch.load(config.obs_encoder_path))
+    #obs_encoder.test_encoder_tmp()
     #obs_encoder.set_encode_type('recon')
     #obs_encoder.set_encode_type('identity')
     #emb_dim = obs_dim

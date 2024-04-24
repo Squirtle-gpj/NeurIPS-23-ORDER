@@ -19,9 +19,9 @@ n_eval_episodes: 10
 
 
 share_codebook: False
-vq_coef: 0.20
+vq_coef: 0.00
 commit_coef: 0.40
 
-weight_init: False
+weight_init: True
 
 

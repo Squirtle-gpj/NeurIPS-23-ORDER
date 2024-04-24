@@ -105,7 +105,7 @@ class QuantileDiscretizer:
 
 		return indices
 
-	def encode(self, x, subslice=(None, None)):
+	def encode(self, x, subslice=(None, None), clip=False):
 		'''
 			x : [ B x observation_dim ]
 		'''

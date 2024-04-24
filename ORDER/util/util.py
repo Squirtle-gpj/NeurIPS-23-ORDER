@@ -160,9 +160,9 @@ def evaluate_policy_obs_encoder(env, obs_encoder, policy, max_episode_steps, det
                 action = action.cpu().numpy()
             else:
                 if not label_input:
-                    obs_emb = obs_encoder.encode(to_torch(obs))
+                    obs_emb = obs_encoder.encode(to_torch(obs), clip=True)
                 else:
-                    _, obs_emb = obs_encoder.encode(to_torch(obs), True)
+                    _, obs_emb = obs_encoder.encode(to_torch(obs), get_idx=True, clip=True)
                 action = policy.act(obs_emb.float(), deterministic=deterministic).cpu().numpy()
         next_obs, reward, done, info = env.step(np.squeeze(action))
         total_reward += reward

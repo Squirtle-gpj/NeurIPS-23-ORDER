@@ -95,8 +95,10 @@ class NearestEmbed(nn.Module):
         if init_weight is not None:
             init_weight = init_weight.reshape(-1).unsqueeze(dim=0).repeat(embeddings_dim, 1)
             self.weight = nn.Parameter(init_weight)
+            #self.weight = init_weight
         else:
             self.weight = nn.Parameter(torch.rand(embeddings_dim, num_embeddings))
+            #self.weight = torch.rand(embeddings_dim, num_embeddings)
         self.share_codebook = share_codebook
 
     def forward(self, x, weight_sg=False):

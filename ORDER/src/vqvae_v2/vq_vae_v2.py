@@ -38,8 +38,8 @@ class VQ_VAE(nn.Module):
         self.rep_dim = self.obs_dim * self.code_dim
         self.hidden_sizes = hidden_sizes
         self.lr = lr
-        self.obs_encoder = FlattenMlp(
-            input_size=1 + obs_dim, output_size=code_dim, hidden_sizes=hidden_sizes
+        self.obs_encoder = CustomLinear(
+            input_size=obs_dim, code_dim=code_dim
         )
         self.emb = NearestEmbed(num_embeddings=self.n_code, embeddings_dim=self.code_dim, share_codebook=self.share_codebook, init_weight=init_emb)
 
@@ -59,17 +59,17 @@ class VQ_VAE(nn.Module):
 
 
 
-        self.emb.weight.detach().normal_(0, 0.02)
-        torch.fmod(self.emb.weight, 0.04)
+        #self.emb.weight.detach().normal_(0, 0.02)
+        #torch.fmod(self.emb.weight, 0.04)
 
     def get_z_e(self, obs):
         if len(obs.shape)==1:
             batch_size = 1
         else:
             batch_size = obs.shape[0]
-        obs = obs.reshape(batch_size, self.obs_dim, 1)
-        one_hot_vectors = torch.eye(self.obs_dim, device=obs.device).unsqueeze(0).expand(batch_size, -1, -1)
-        emb_hat = self.obs_encoder(torch.cat([obs, one_hot_vectors], dim=-1))
+        obs = obs.reshape(batch_size, self.obs_dim)
+        #one_hot_vectors = torch.eye(self.obs_dim, device=obs.device).unsqueeze(0).expand(batch_size, -1, -1)
+        emb_hat = self.obs_encoder(obs)
         #return h2.view(-1, self.emb_size, int(self.hidden / self.emb_size))
         return emb_hat.permute(0,2,1)
 
@@ -115,6 +115,7 @@ class VQ_VAE(nn.Module):
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
         self.optimizer.step()
+        self.obs_encoder.safe_update()
         self.lr_schedule.step()
         results = {
             'loss': float(loss.detach().cpu().mean()),
@@ -125,7 +126,7 @@ class VQ_VAE(nn.Module):
 
         return results
 
-    def encode(self, obs, get_idx=False, clip=False, return_recon=True):
+    def encode(self, obs, get_idx=False, clip=False, return_recon=False):
         if clip:
             # Expand self.mins and self.maxs to match the shape of obs
             #expanded_mins = self.mins.unsqueeze(0).expand_as(obs)
@@ -139,7 +140,8 @@ class VQ_VAE(nn.Module):
         if return_recon:
             #emb = self.obs_decoder(emb)  # test-1: reconstruction
             #emb = z_e.detach()   #test-2： continuous output
-            emb = self.tmp_encoder(obs)  #test-3: untrained encoder
+            #emb = self.tmp_encoder(obs)  #test-3: untrained encoder
+            pass
         if not get_idx:
             return emb.detach()
         else:
@@ -169,23 +171,35 @@ class VQ_VAE(nn.Module):
         self.tmp_encoder = CustomLinear(self.obs_dim)
         self.tmp_encoder.to(dtype=torch.float32)
         self.tmp_encoder.to(device)
+
+
+
 class CustomLinear(nn.Module):
-    def __init__(self, tensor_dim):
+    def __init__(self, input_size, code_dim=1):
         super(CustomLinear, self).__init__()
-        # Initialize weights as ones and biases as zeros
-        #self.weights = nn.Parameter(torch.ones(tensor_dim))
-        #self.weights = nn.Parameter(torch.randn(tensor_dim))
-        #self.bias = nn.Parameter(torch.zeros(tensor_dim))
-        #self.bias = nn.Parameter(torch.randn(tensor_dim))
-        # Initialize weights with a normal distribution around 1
-        self.weights = nn.Parameter(torch.randn(tensor_dim) * 0.1 + 1)
-        # Clip weights to prevent extreme values
+        self.input_size = input_size
+        self.code_dim = code_dim
+
+        # Initialize weights and biases
+        self.weights = nn.Parameter(torch.randn(input_size, code_dim) * 0.1 + 1)
         self.weights.data = torch.clamp(self.weights.data, min=0.8, max=1.2)
-        # Initialize biases randomly
-        self.bias = nn.Parameter(torch.randn(tensor_dim)*0.1)
+
+        self.bias = nn.Parameter(torch.randn(input_size, code_dim) * 0.1)
         self.bias.data = torch.clamp(self.bias.data, min=-0.2, max=0.2)
 
     def forward(self, x):
-        # Apply the transformation y_i = w_i * x_i + b_i for each dimension
-        return x * self.weights + self.bias
+        # x has a shape of (batch_size, input_size, 1), we need to adjust it to perform element-wise multiplication
+        # Expand x to match the (batch_size, input_size, code_dim) for dot multiplication
+
+        x_expanded = x.unsqueeze(-1).expand(-1, -1, self.code_dim)  # Now x is (batch_size, input_size, code_dim)
+
+        # Perform element-wise multiplication
+        output = x_expanded * self.weights + self.bias  # Broadcasting will happen automatically
+
+        return output
+
+    def safe_update(self):
+        self.weights.data = torch.clamp(self.weights.data, min=0.8, max=1.2)
+        self.bias.data = torch.clamp(self.bias.data, min=-0.2, max=0.2)
+
 
