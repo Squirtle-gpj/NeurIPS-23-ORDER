@@ -353,15 +353,19 @@ class ObservationManager:
         masked_observation = self.mask_and_add_noise(full_observation, mask_indices)
         return full_observation, mask_indices, masked_observation
 
-    def mask_and_add_noise(self, observation, mask_indices):
+    def mask_and_add_noise(self, observation, mask_indices, mask_fill_type='zero', noise_scale=0):
         masked_observation = observation.clone()
 
-        if self.current_scheme.get('mask_fill_type', 'zero') == 'zero':
+        if mask_fill_type == 'zero':
             masked_observation[mask_indices] = 0
-        elif self.current_scheme.get('mask_fill_type', 'zero') == 'noise':
-            noise_scale = self.current_scheme.get('noise_scale', 0)
+        elif mask_fill_type == 'noise':
+            #noise_scale = self.current_scheme.get('noise_scale', 0)
             noise = torch.randn(mask_indices.shape) * noise_scale
             masked_observation[mask_indices] +=  noise
+        elif mask_fill_type == 'distort':
+            distort_range = (1-noise_scale, 1+noise_scale)
+            distort_factors = torch.FloatTensor(observation.shape).uniform_(*distort_range)
+            masked_observation *= distort_factors
         else:
             raise ValueError(f"Invalid mask_fill_type: {self.current_scheme.get('mask_fill_type', 'zero')}")
 
@@ -384,7 +388,7 @@ class ObservationManager:
                 "V": [8, 9, 10, 11, 12, 13, 14, 15, 16],
             },
             "hopper": {
-                "random": [0.1, 0.3, 0.5],
+                "random": [0.1, 0.3, 0.5, 0.7, 0.9],
                 "P": [0, 1, 2, 3, 4],
                 "V": [5, 6, 7, 8, 9, 10],
             },

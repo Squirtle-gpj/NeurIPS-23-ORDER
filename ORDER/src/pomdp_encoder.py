@@ -196,12 +196,21 @@ class POMDP_encoder(nn.Module):
         labels = labels.unsqueeze(dim=-1)
         logits, predicted_codes, mask = self.forward(prev_actions, rewards, observs, mask_scheme)
 
+        """
         if self.continuous:
             if self.use_obs_as_labels:
                 labels = observs
             loss = self.loss_fn(logits[mask], labels[mask].float().reshape(-1))
         else:
             loss = self.loss_fn(logits[mask], labels[mask].long().reshape(-1))
+        """
+        if self.continuous:
+            if self.use_obs_as_labels:
+                labels = observs
+            loss = self.loss_fn(logits, labels.float().reshape(-1))
+        else:
+            loss = self.loss_fn(logits, labels.long().reshape(-1))
+
 
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -237,7 +246,7 @@ class POMDP_encoder(nn.Module):
         else:
             logits = self.encoder(joint_embeds).reshape(1, 1, self.obs_dim, self.n_code)
             predicted_codes = logits.argmax(dim=-1).reshape(1, 1, self.obs_dim)
-
+        """
         if v2:
            result, predicted_codes  = self.obs_discretizer.get_predicted_emb(obs, predicted_codes, mask)
         else:
@@ -247,8 +256,11 @@ class POMDP_encoder(nn.Module):
                 true_codes = self.obs_discretizer.encode(obs).reshape(predicted_codes.shape)
             true_codes[mask] = predicted_codes[mask].float()
             result = true_codes
+        
+        """
 
-        return result, current_internal_state
+
+        return predicted_codes, current_internal_state
 
 
 

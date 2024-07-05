@@ -8,15 +8,18 @@ class ObsRepMLP(nn.Module):
     def __init__(self, obs_dim, emb_dim=128, token_dim=3, both=False):
         super(ObsRepMLP, self).__init__()
         self.obs_dim = obs_dim
-        self.token_dim = token_dim
+        #self.token_dim = token_dim
         self.emb_dim = emb_dim
-        self.attribute_dim = 1
+        #self.attribute_dim = 1
 
+        """
         self.token_encoder = nn.Sequential(
             nn.Linear(self.attribute_dim, self.token_dim),
         )
+        """
 
-        self.encoder_input_dim = obs_dim * token_dim
+
+        self.encoder_input_dim = obs_dim
         self.encoder = nn.Sequential(
             nn.Linear(self.encoder_input_dim, self.emb_dim),
             nn.ReLU(),
@@ -27,8 +30,8 @@ class ObsRepMLP(nn.Module):
                 nn.Linear(self.encoder_input_dim, self.emb_dim),
                 nn.ReLU(),
             )
-        self.mask_token = nn.Parameter(torch.zeros(1, 1, token_dim))
-        torch.nn.init.normal_(self.mask_token, std=.02)
+        #self.mask_token = nn.Parameter(torch.zeros(1, 1, token_dim))
+        #torch.nn.init.normal_(self.mask_token, std=.02)
 
         #self.set_observable_type(observable_type=observable_type)
 
@@ -39,15 +42,17 @@ class ObsRepMLP(nn.Module):
 
         T, batch_size, _ = obs.shape
         new_batch_size = T * batch_size
-        obs = obs.reshape(-1, 1).to(device)
-        obs_token = self.token_encoder(obs)
-        obs_token = obs_token.reshape(new_batch_size, self.obs_dim, self.token_dim)
-        obs_token, mask = self.mask(obs_token, new_batch_size, mask_scheme)
-        z = self.encoder(obs_token.reshape(new_batch_size, -1))
+        obs = obs.reshape(-1, self.obs_dim).to(device)
+        #obs = obs.reshape(-1, 1).to(device)
+        #obs_token = self.token_encoder(obs)
+        #obs_token = obs_token.reshape(new_batch_size, self.obs_dim, self.token_dim)
+        #obs_token, mask = self.mask(obs_token, new_batch_size, mask_scheme)
+        noisy_obs,  mask = self.mask(obs, new_batch_size, mask_scheme)
+        z = self.encoder(noisy_obs.reshape(new_batch_size, -1))
 
 
         if self.both:
-            z2 = self.encoder2(obs_token.reshape(new_batch_size, -1))
+            z2 = self.encoder2(noisy_obs.reshape(new_batch_size, -1))
             return z.reshape(T, batch_size, -1), z2.reshape(T, batch_size, -1), mask.reshape(T, batch_size, -1)
 
         return z.reshape(T, batch_size, -1), mask.reshape(T, batch_size, -1)
@@ -62,7 +67,7 @@ class ObsRepMLP(nn.Module):
         elif self.observable_type == 'fixed':
             pass
 
-    def mask(self, obs_token, batch_size, mask_scheme=None):
+    def mask(self, noisy_obs, batch_size, mask_scheme=None):
         if mask_scheme is None:
             mask_scheme = {
                 'observable_type': 'full',
