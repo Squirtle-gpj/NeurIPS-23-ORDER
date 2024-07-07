@@ -67,7 +67,7 @@ class ObsRepMLP(nn.Module):
         elif self.observable_type == 'fixed':
             pass
 
-    def mask(self, noisy_obs, batch_size, mask_scheme=None):
+    def mask(self, obs, batch_size, mask_scheme=None):
         if mask_scheme is None:
             mask_scheme = {
                 'observable_type': 'full',
@@ -75,29 +75,36 @@ class ObsRepMLP(nn.Module):
         observable_type = mask_scheme.get('observable_type', 'full')
         mask_entry = mask_scheme.get('mask_entry', None)
         mask_ratio = mask_scheme.get('mask_ratio', None)
+        noise_format = mask_scheme.get('noise_format', 'additive')
+        noise_scale = mask_scheme.get('noise_scale', 0)
 
         # Initialize the mask tensor to False
-        mask = torch.zeros(obs_token.shape[0], self.obs_dim, dtype=torch.bool)
+        mask = torch.zeros(obs.shape[0], self.obs_dim, dtype=torch.bool)
 
         if observable_type == 'fixed':
-            mask_token = self.mask_token.expand(batch_size, len(mask_entry), -1)
-            obs_token[:, mask_entry, :] = mask_token
+            #mask_token = self.mask_token.expand(batch_size, len(mask_entry), -1)
+            #obs[:, mask_entry, :] = g
             mask[:, mask_entry] = True
+            #noisy_obs = self.add_noise(obs, mask_entry, mask_scheme)
+            if noise_format == 'additive':
+                obs[:,mask_entry] += torch.randn(batch_size, len(mask_entry), device='cuda') * noise_scale
         elif observable_type == 'random_step':
-
+            
             num_masked_elements_per_row = min(int(self.obs_dim * mask_ratio) + 1, self.obs_dim)
-            mask_indices = torch.randint(0, self.obs_dim, (obs_token.shape[0], num_masked_elements_per_row))
+            mask_indices = torch.randint(0, self.obs_dim, (obs.shape[0], num_masked_elements_per_row))
             mask.scatter_(1, mask_indices, True)
             mask_token = self.mask_token.squeeze(dim=1).expand(mask.sum(), -1)
             obs_token[mask, :] = mask_token
         elif observable_type == 'random_episode':
             #num_masked_elements = math.ceil(self.obs_dim * mask_ratio)
             #mask_entry = torch.randperm(self.obs_dim)[:num_masked_elements]
-            mask_token = self.mask_token.expand(batch_size, len(mask_entry), -1)
-            obs_token[:, mask_entry, :] = mask_token
+            #mask_token = self.mask_token.expand(batch_size, len(mask_entry), -1)
+            #obs_token[:, mask_entry, :] = mask_token
             mask[:, mask_entry] = True
+            if noise_format == 'additive':
+                obs[:,mask_entry] += torch.randn(batch_size, len(mask_entry), device='cuda') * noise_scale
 
-        return obs_token, mask
+        return obs, mask
 
 
 class ObsRepEncoder(nn.Module):
