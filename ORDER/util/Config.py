@@ -14,6 +14,7 @@ import os
 import yaml
 import json
 import collections
+import platform
 
 
 def get_parser(arg_list=['default']):
@@ -70,7 +71,10 @@ class Config(object):
         # Create directories
         for (key, val) in self.paths.items():
             if key not in ['root', 'datasets']:
-                create_directory_tree(val)
+                if platform.system() == 'Windows':
+                    create_directory_tree_windows(val)
+                else:
+                    create_directory_tree(val)
 
         # Save the all the configuration settings
         dump(args.__dict__, open(path.join(self.paths['logs'], 'args.yaml'), 'w'), default_flow_style=False,
@@ -156,14 +160,14 @@ def check_n_create(dir_path, overwrite=False):
     except FileExistsError:
         print("\n ##### Warning File Exists... perhaps multi-threading error? \n")
 
-"""
+
 def create_directory_tree(dir_path):
     dir_path = str.split(dir_path, sep='/')[1:-1]  # Ignore the blank characters in the start and end of string
     for i in range(len(dir_path)):
         check_n_create(path.join('/', *(dir_path[:i + 1])))
-"""
 
-def create_directory_tree(dir_path):
+
+def create_directory_tree_windows(dir_path):
     dir_path = dir_path.strip(os.path.sep)  # Remove leading and trailing path separators
     dir_path_parts = dir_path.split(os.path.sep)
 
