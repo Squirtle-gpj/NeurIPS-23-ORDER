@@ -19,15 +19,16 @@ timestamp=$(date +%Y%m%d%H%M%S)
 
 
 
-    # 训练命令
-  read -r -d '' training_commands <<EOF
-  python3 \
-  ../${script_name} \
+
+# 训练命令
+training_commands=$(cat <<EOF
+python3 ../${script_name} \
         --experiment_name ${experiment_name} \
         --code_name ${code_name} \
         --env_name ${env_name} \
-        --seed ${seed} \
+        --seed ${seed}
 EOF
+)
     # 打印训练命令
   echo "$training_commands"
   # 执行训练命令
