@@ -59,7 +59,7 @@ class Config(object):
         self.paths["tb"] = path.join(self.paths['experiment'],'tb', args.code_name+"_"+str(args.seed)+"/")
         #self.paths["data"] = path.join(self.paths['Experiments'], args.env, 'data', args.experiment)
         #path_prefix = [self.paths['experiment'], str(args.seed)]
-        self.paths['logs'] = path.join(self.paths['experiment'], 'Logs',args.code_name+"_"+str(args.seed)+"")
+        self.paths['logs'] = path.join(self.paths['experiment'], 'Logs',args.code_name+"_"+str(args.seed)+"/")
         self.paths['ckpt'] = path.join(self.paths['experiment'], 'Checkpoints/',args.code_name+"_"+str(args.seed)+"/")
         self.paths['results'] = path.join(self.paths['experiment'], 'Results/',args.code_name+"_"+str(args.seed)+"/")
         #self.paths['data'] = args.data_path
