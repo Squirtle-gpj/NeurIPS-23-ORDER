@@ -330,6 +330,8 @@ class ObservationManager:
             raise RuntimeError("No current_scheme is set. Use set_scheme() to set the current scheme.")
 
         observable_type = self.current_scheme['observable_type']
+        noise_format = self.current_scheme.get('noise_format', 'additive')
+        noise_scale = self.current_scheme.get('noise_scale', 0)
 
         if observable_type == 'full':
             return full_observation, torch.tensor([]).long(), full_observation
@@ -350,7 +352,8 @@ class ObservationManager:
         else:
             raise ValueError(f"Invalid observable_type: {observable_type}")
 
-        masked_observation = self.mask_and_add_noise(full_observation, mask_indices)
+        masked_observation = self.mask_and_add_noise(full_observation, mask_indices,
+                                                     mask_fill_type=noise_format, noise_scale=noise_scale)
         return full_observation, mask_indices, masked_observation
 
     def mask_and_add_noise(self, observation, mask_indices, mask_fill_type='zero', noise_scale=0):
@@ -358,11 +361,11 @@ class ObservationManager:
 
         if mask_fill_type == 'zero':
             masked_observation[mask_indices] = 0
-        elif mask_fill_type == 'noise':
+        elif mask_fill_type == 'additive':
             #noise_scale = self.current_scheme.get('noise_scale', 0)
             noise = torch.randn(mask_indices.shape) * noise_scale
             masked_observation[mask_indices] +=  noise
-        elif mask_fill_type == 'distort':
+        elif mask_fill_type == 'multiplicative':
             distort_range = (1-noise_scale, 1+noise_scale)
             distort_factors = torch.FloatTensor(observation.shape).uniform_(*distort_range)
             masked_observation *= distort_factors
@@ -415,6 +418,10 @@ class ObservationManager:
         self.train_schemes.append(tmp)
 
 
+        mask_ratio = 0.5
+        noise_format = 'additive'
+        noise_scale = [0.1]
+
         self.scheme_info = {
             "halfcheetah": {
                 "random": [0.1,  0.3,  0.5, 0.7, 0.9],
@@ -445,23 +452,30 @@ class ObservationManager:
         self.schemes = []
         for k, v in self.scheme_info[self.env_name].items():
             if k == "random":
-                for i_ratio in v:
+                for i_scale in noise_scale:
                     tmp = {"observable_type": "random_step",
-                           "mask_ratio": i_ratio,
+                           "mask_ratio": mask_ratio,
                            "mask_entry": [0],
-                           "name": "random_step_" + str(i_ratio)}
+                           "noise_format": noise_format,
+                           "noise_scale": i_scale,
+                           "name": "random_step_" + str(mask_ratio)+"_"+str(noise_format)+"_"+str(noise_scale[0])}
                     self.schemes.append(tmp)
 
-                for i_ratio in v:
+                for i_scale in noise_scale:
                     tmp = {"observable_type": "random_episode",
-                           "mask_ratio": i_ratio,
+                           "mask_ratio": mask_ratio,
                            "mask_entry": [0],
-                           "name": "random_episode_" + str(i_ratio)}
+                           "noise_format": noise_format,
+                           "noise_scale": i_scale,
+                           "name": "random_episode_" + str(mask_ratio)+"_"+str(noise_format)+"_"+str(noise_scale[0])}
                     self.schemes.append(tmp)
 
             else:
-                tmp = {"observable_type": "fixed",
-                       "mask_ratio": 0,
-                       "mask_entry": v,
-                       "name": 'mask_' + k}
-                self.schemes.append(tmp)
+                for i_scale in noise_scale:
+                    tmp = {"observable_type": "fixed",
+                           "mask_ratio": 0,
+                           "mask_entry": v,
+                           "noise_format": noise_format,
+                           "noise_scale": i_scale,
+                           "name": 'mask_' + k+"_"+str(noise_format)+"_"+str(noise_scale[0])}
+                    self.schemes.append(tmp)
