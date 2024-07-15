@@ -1,6 +1,8 @@
 import os
-os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco210//bin")
-os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco-py//mujoco_py") #manually importing mujoco-py dll files for windows, in Linux you can delete these two lines
+import platform
+if platform.system() == "Windows":
+    os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco210//bin")
+    os.add_dll_directory("C://Users//Administrator//.mujoco//mujoco-py//mujoco_py") #manually importing mujoco-py dll files for windows, in Linux you can delete these two lines
 import gym
 import d4rl
 import numpy as np
