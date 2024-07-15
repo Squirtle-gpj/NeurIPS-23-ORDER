@@ -11,7 +11,7 @@ script_name2="run_vae_policy.py"
 experiment_name="debug_distributional"
 code_name="debug_main"
 env_name="hopper-medium-v2"
-seeds=(1,2,3,4,5)
+seeds=(1 2 3 4 5)
 
 
 
