@@ -11,7 +11,7 @@ experiment_name="debug_distributional"
 code_name="debug_distribution_policy"
 env_name="hopper-medium-v2"
 seed=1234
-critic_path="../Experiments/debug_distributional/Checkpoints/debug_main_1234/best.pt"
+critic_path="../../Experiments/debug_distributional/Checkpoints/debug_main_1234/best.pt"
 
 
 
