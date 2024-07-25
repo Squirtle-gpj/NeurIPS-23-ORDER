@@ -10,6 +10,7 @@ script_name="main.py"
 script_name2="run_vae_policy.py"
 experiment_name="debug_distributional"
 code_name="debug_main"
+code_name2="debug_distribution_policy"
 env_name="hopper-medium-v2"
 seeds=(1 2 3 4 5)
 
@@ -42,7 +43,7 @@ EOF
     training_commands=$(cat <<EOF
   python3 ../${script_name2} \
           --experiment_name ${experiment_name} \
-          --code_name ${code_name} \
+          --code_name ${code_name2} \
           --env_name ${env_name} \
           --seed ${seed} \
           --critic_path ${critic_path}
